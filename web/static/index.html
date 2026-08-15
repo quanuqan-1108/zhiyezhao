@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职业照小能手 · Material Design 3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..700&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+  <!-- ===== M3 Top App Bar ===== -->
+  <header class="app-bar" id="app-bar">
+    <div class="app-bar-inner">
+      <div class="app-bar-logo">📸</div>
+      <div class="app-bar-title">
+        <h1>职业照小能手</h1>
+        <p>为讲师生成 6 张专业形象照 · 严格保留五官与发型 · 春秋季着装 · 纯色背景</p>
+      </div>
+      <button class="icon-btn" id="btn-theme" title="切换深色模式" aria-label="切换主题">
+        <span id="theme-icon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ===== M3 Stepper ===== -->
+    <nav class="stepper" id="stepper">
+      <div class="stepper-item active" data-step="1">
+        <span class="stepper-num">1</span> 上传照片
+      </div>
+      <div class="stepper-item" data-step="2">
+        <span class="stepper-num">2</span> 选择参数
+      </div>
+      <div class="stepper-item" data-step="3">
+        <span class="stepper-num">3</span> 确认基准照
+      </div>
+      <div class="stepper-item" data-step="4">
+        <span class="stepper-num">4</span> 查看 6 张
+      </div>
+    </nav>
+
+    <!-- ===== Step 1+2: Upload + Form ===== -->
+    <section class="card" id="panel-upload">
+      <h2 class="md-headline-small">上传你的照片 + 选择参数</h2>
+      <p class="md-body-medium hint">建议上传单人正面照，面部清晰、光线充足；可上传 1~5 张，多张更像我。</p>
+
+      <div class="upload-zone" id="upload-zone" role="button" tabindex="0" aria-label="上传照片">
+        <input type="file" id="file-input" accept="image/*" multiple hidden>
+        <div class="upload-empty" id="upload-empty">
+          <div class="upload-icon">📷</div>
+          <div class="md-title-medium">点击或拖拽照片到此处</div>
+          <p class="small">支持 JPG / PNG，建议短边 ≥ 512px</p>
+        </div>
+        <div class="upload-preview" id="upload-preview"></div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="field">授课领域</label>
+          <select id="field">
+            <option value="企业管理">企业管理 / 培训</option>
+            <option value="金融">金融 / 财税</option>
+            <option value="法律">法律</option>
+            <option value="IT">IT / 互联网</option>
+            <option value="人文艺术">人文 / 艺术</option>
+            <option value="亲子教育">亲子教育</option>
+            <option value="健康">健康</option>
+            <option value="心理">心理</option>
+            <option value="礼仪">礼仪 / 形象</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="use-case">使用场景</label>
+          <select id="use-case">
+            <option value="自我介绍页">自我介绍页主形象</option>
+            <option value="课程海报">课程海报主体</option>
+            <option value="招生简章">招生简章</option>
+            <option value="讲师介绍PPT">讲师介绍 PPT</option>
+            <option value="课程开场页">课程开场页</option>
+            <option value="其他">其他培训场景</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="style">风格偏好</label>
+          <select id="style">
+            <option value="知性亲和">知性亲和（推荐）</option>
+            <option value="正式权威">正式权威</option>
+            <option value="设计感">设计感</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="framing">取景范围</label>
+          <select id="framing">
+            <option value="半身">半身（腰部以上）</option>
+            <option value="3/4全身">3/4 全身（约膝部以上）</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="wear-glasses">是否戴眼镜</label>
+          <select id="wear-glasses">
+            <option value="true">戴眼镜（保留）</option>
+            <option value="false">不戴眼镜</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-filled btn-lg" id="btn-start" disabled>
+          <span>开始生成基准照</span>
+          <span>→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== Step 3: Baseline Confirm ===== -->
+    <section class="card hidden" id="panel-baseline">
+      <h2 class="md-headline-small">确认基准照</h2>
+      <p class="md-body-medium hint">这是按方案的第 1 张「经典正面照」。请检查五官、发型是否像本人。</p>
+
+      <div class="baseline-area">
+        <div class="baseline-preview">
+          <img id="baseline-img" alt="基准照">
+        </div>
+        <div class="baseline-meta">
+          <h3 class="md-headline-small">经典正面照</h3>
+          <p class="muted">3:4 竖版 · 1024×1536 · 纯白背景 · 藏蓝西装</p>
+          <button class="btn btn-tonal" onclick="viewPrompt(1)">
+            <span>📄</span> <span>查看提示词</span>
+          </button>
+          <button class="btn btn-outlined" onclick="downloadOne(1)">
+            <span>⬇</span> <span>下载此张</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-filled btn-lg" id="btn-confirm">
+          <span>✓</span> <span>满意，继续生成其余 5 张</span>
+        </button>
+        <button class="btn btn-tonal btn-lg" id="btn-regen-baseline">
+          <span>↻</span> <span>重新生成基准照</span>
+        </button>
+        <button class="btn btn-text" id="btn-back">← 返回修改</button>
+      </div>
+      <p class="muted small mt-24">基准照阶段最多可调整 5 次</p>
+    </section>
+
+    <!-- ===== Step 4: Gallery ===== -->
+    <section class="card hidden" id="panel-gallery">
+      <h2 class="md-headline-small">6 张讲师形象照</h2>
+      <p class="md-body-medium hint">点击图片查看大图 · 输入修改要求 · 下载单张。完成后可一键打包下载。</p>
+      <div class="gallery" id="gallery"></div>
+      <div class="action-row">
+        <button class="btn btn-filled btn-lg" id="btn-download-all">
+          <span>⬇</span> <span>一键打包下载全部 6 张</span>
+        </button>
+        <button class="btn btn-text" id="btn-new-task">开始新任务</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== M3 Dialog: Image Viewer ===== -->
+  <div class="modal hidden" id="modal-viewer" role="dialog" aria-modal="true">
+    <div class="modal-mask" onclick="closeViewer()"></div>
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeViewer()" aria-label="关闭">×</button>
+      <img id="modal-img" alt="预览">
+      <div class="modal-info" id="modal-info"></div>
+      <div class="modal-actions">
+        <button class="btn btn-tonal" id="modal-download">
+          <span>⬇</span> <span>下载</span>
+        </button>
+        <button class="btn btn-outlined" id="modal-view-prompt">
+          <span>📄</span> <span>提示词</span>
+        </button>
+        <button class="btn btn-outlined" id="modal-revise">
+          <span>✏️</span> <span>修改</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== M3 Dialog: Prompt ===== -->
+  <div class="modal hidden" id="modal-prompt" role="dialog" aria-modal="true">
+    <div class="modal-mask" onclick="closePrompt()"></div>
+    <div class="modal-content modal-wide">
+      <button class="modal-close" onclick="closePrompt()" aria-label="关闭">×</button>
+      <h3>📄 生成提示词</h3>
+      <pre class="prompt-text" id="prompt-text"></pre>
+      <div class="muted small" id="prompt-usage"></div>
+    </div>
+  </div>
+
+  <!-- ===== M3 Dialog: Revise ===== -->
+  <div class="modal hidden" id="modal-revise" role="dialog" aria-modal="true">
+    <div class="modal-mask" onclick="closeRevise()"></div>
+    <div class="modal-content modal-wide">
+      <button class="modal-close" onclick="closeRevise()" aria-label="关闭">×</button>
+      <h3>✏️ 修改 <span id="revise-name"></span></h3>
+      <p class="md-body-medium hint">用自然语言描述要调整的内容，如「光线再柔和一点」「换成纯灰背景」「微笑再明显一点」。涉及五官/发型的修改只能向「更像本人」方向调整。</p>
+      <textarea id="revise-input" rows="3" placeholder="输入修改要求..."></textarea>
+      <div class="action-row">
+        <button class="btn btn-filled" id="btn-revise-submit">
+          <span>重新生成此张</span>
+        </button>
+        <button class="btn btn-text" onclick="closeRevise()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== M3 Loading Overlay (Circular Progress) ===== -->
+  <div class="loading hidden" id="loading">
+    <div class="loading-box">
+      <div class="progress-circular">
+        <svg viewBox="0 0 48 48">
+          <circle class="track" cx="24" cy="24" r="20"></circle>
+          <circle class="indicator" cx="24" cy="24" r="20"></circle>
+        </svg>
+      </div>
+      <p id="loading-text">生成中，请稍候…</p>
+      <p class="small" id="loading-sub">每张约 30-60 秒</p>
+    </div>
+  </div>
+
+  <!-- ===== M3 Snackbar ===== -->
+  <div class="snackbar" id="snackbar"></div>
+
+  <!-- ===== FAB (回到顶部) ===== -->
+  <button class="fab" id="fab-top" title="回到顶部" aria-label="回到顶部">↑</button>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

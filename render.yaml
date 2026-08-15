@@ -1,0 +1,18 @@
+# Render Blueprint — 职业照小能手 Web 系统
+# 文档：https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: zhiyezhao
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: web
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.12
+      - key: ARK_API_KEY
+        sync: false # 敏感密钥：在 Render Dashboard / API 中设置，不落仓库
