@@ -13,8 +13,11 @@
   GET  /                          静态首页
 """
 import asyncio
+import base64
+import hmac
 import io
 import json
+import os
 import time
 import zipfile
 from pathlib import Path
@@ -22,6 +25,7 @@ from pathlib import Path
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.base import BaseHTTPMiddleware
 
 import seedream
 import task_manager as tm
@@ -33,6 +37,37 @@ OUTPUT_DIR = WEB_DIR / "outputs"
 
 app = FastAPI(title="职业照小能手 Web")
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+# ========== 访问密码（HTTP Basic Auth）==========
+# 仅在设置了环境变量 APP_PASSWORD 时启用。未设置则完全开放。
+# Render 后台 Environment 中新增 APP_PASSWORD 后重新部署即可生效。
+APP_PASSWORD = os.environ.get("APP_PASSWORD", "").strip()
+
+
+@app.middleware("http")
+async def password_guard(request, call_next):
+    if not APP_PASSWORD:
+        return await call_next(request)
+    # 健康检查 / 探活路径放行，避免外部监控被挡
+    if request.url.path in ("/healthz", "/health", "/ping"):
+        return await call_next(request)
+    auth = request.headers.get("Authorization", "")
+    ok = False
+    try:
+        scheme, encoded = auth.split(" ", 1)
+        if scheme.lower() == "basic":
+            decoded = base64.b64decode(encoded).decode("utf-8", "ignore")
+            _, pw = decoded.split(":", 1)
+            ok = hmac.compare_digest(pw, APP_PASSWORD)
+    except Exception:
+        ok = False
+    if not ok:
+        return JSONResponse(
+            status_code=401,
+            content={"detail": "需要访问密码"},
+            headers={"WWW-Authenticate": 'Basic realm="职业照小能手"'},
+        )
+    return await call_next(request)
 
 
 # ========== 首页 ==========
