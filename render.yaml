@@ -15,4 +15,4 @@ services:
       - key: PYTHON_VERSION
         value: 3.13.12
       - key: ARK_API_KEY
-        sync: false # 敏感密钥：在 Render Dashboard / API 中设置，不落仓库
+        sync: false # 密钥不落仓库：在 Render Dashboard 的 Environment 中手动设置一次（GitHub 密钥扫描会拦截明文）
