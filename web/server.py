@@ -64,8 +64,8 @@ async def password_guard(request, call_next):
     if not ok:
         return JSONResponse(
             status_code=401,
-            content={"detail": "需要访问密码"},
-            headers={"WWW-Authenticate": 'Basic realm="职业照小能手"'},
+            content={"detail": "unauthorized"},
+            headers={"WWW-Authenticate": 'Basic realm="zhiyezhao"'},
         )
     return await call_next(request)
 
