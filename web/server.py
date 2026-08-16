@@ -70,6 +70,12 @@ async def password_guard(request, call_next):
     return await call_next(request)
 
 
+# ========== 健康检查（供 Render 探活，免密放行）==========
+@app.get("/healthz")
+def healthz():
+    return JSONResponse({"status": "ok"})
+
+
 # ========== 首页 ==========
 @app.get("/", response_class=HTMLResponse)
 def index():
